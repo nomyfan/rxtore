@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "example-basic": "cd examples/rxtore-basic && pnpm run dev"
+  }
+}
