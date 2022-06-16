@@ -9,14 +9,12 @@ import * as R from "ramda";
 
 const id = <T>(v: T) => v;
 
-const identical = R.identical;
-
 const shallow = <T>(v1: T, v2: T) => {
   if (v1 instanceof Array && v2 instanceof Array) {
     if (v1.length !== v2.length) {
       return false;
     }
-    return R.all(([it1, it2]) => identical(it1, it2), R.zip(v1, v2));
+    return R.all(([it1, it2]) => R.identical(it1, it2), R.zip(v1, v2));
   }
 
   if (typeof v1 === "object" && typeof v2 === "object") {
@@ -30,7 +28,7 @@ const shallow = <T>(v1: T, v2: T) => {
     );
   }
 
-  return identical(v1, v2);
+  return R.identical(v1, v2);
 };
 
 const createStore = <T>(init: T) => {
@@ -45,7 +43,7 @@ const createStore = <T>(init: T) => {
     const subscription = useRef<Unsubscribable | null>(null);
     if (!subscription.current) {
       subscription.current = store$
-        .pipe(map(selector), distinctUntilChanged(comparator ?? identical))
+        .pipe(map(selector), distinctUntilChanged(comparator ?? R.identical))
         .subscribe((newStore) => {
           _setStore(newStore);
         });
