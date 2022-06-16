@@ -1,10 +1,10 @@
-import { createStore, shallow } from "rxtore";
+import { createStore, shallow, id } from "rxtore";
 
 const { useStore } = createStore({ count: 1, name: "git" });
 
 function Counter() {
   const { store, setStore } = useStore(({ count }) => ({ count }), shallow);
-  console.log("render counter");
+  console.log("render Counter");
 
   return (
     <div>
@@ -34,7 +34,7 @@ function Counter() {
 
 function Name() {
   const { store, setStore } = useStore(({ name }) => ({ name }), shallow);
-  console.log("render name");
+  console.log("render Name");
 
   return (
     <div>
@@ -53,11 +53,26 @@ function Name() {
   );
 }
 
+function All() {
+  const {
+    store: { count, name },
+  } = useStore(id);
+  console.log("render All");
+
+  return (
+    <div>
+      <h1>Name: {name}</h1>
+      <h1>Count: {count}</h1>
+    </div>
+  );
+}
+
 function Home() {
   return (
     <div>
       <Counter />
       <Name />
+      <All />
     </div>
   );
 }

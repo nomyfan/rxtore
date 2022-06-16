@@ -7,6 +7,8 @@ import {
 } from "rxjs";
 import * as R from "ramda";
 
+const id = <T>(v: T) => v;
+
 const identical = R.identical;
 
 const shallow = <T>(v1: T, v2: T) => {
@@ -66,4 +68,4 @@ const createStore = <T>(init: T) => {
   return { useStore };
 };
 
-export { createStore, shallow };
+export { createStore, shallow, id };
