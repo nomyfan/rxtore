@@ -14,6 +14,13 @@ describe("shallow comparator", () => {
     expect(shallow(obj1, obj2)).toBe(false);
   });
 
+  it("should return false if the objects have different keys", () => {
+    const obj1 = { a: 1 };
+    const obj2 = { a: 1, b: 2 };
+
+    expect(shallow(obj1, obj2)).toBe(false);
+  });
+
   it("should return false if the array have different length", () => {
     const arr1 = [1];
     const arr2 = [1, 2];

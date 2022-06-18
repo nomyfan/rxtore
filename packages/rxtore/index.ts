@@ -27,13 +27,16 @@ function shallow<T>(v1: T, v2: T): boolean {
     typeof v2 === "object" &&
     !v2IsArray
   ) {
-    const keys = R.union(
-      Reflect.ownKeys(v1 as unknown as object),
-      Reflect.ownKeys(v2 as unknown as object)
-    );
-    if (!keys.length) {
+    const keys1 = Reflect.ownKeys(v1 as unknown as object);
+    const keys2 = Reflect.ownKeys(v2 as unknown as object);
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+    if (keys1.length === 0 && keys2.length === 0) {
       return true;
     }
+
+    const keys = R.union(keys1, keys2);
     return shallow(
       R.map((key) => (v1 as PlainObject)[key], keys),
       R.map((key) => (v2 as PlainObject)[key], keys)
