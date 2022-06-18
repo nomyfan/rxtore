@@ -7,29 +7,41 @@ import {
 } from "rxjs";
 import * as R from "ramda";
 
+type PlainObject<V = unknown> = Record<string | symbol, V>;
+
 const id = <T>(v: T) => v;
 
-const shallow = <T>(v1: T, v2: T) => {
-  if (v1 instanceof Array && v2 instanceof Array) {
+function shallow<T>(v1: T, v2: T): boolean {
+  const v1IsArray = v1 instanceof Array;
+  const v2IsArray = v2 instanceof Array;
+  if (v1IsArray && v2IsArray) {
     if (v1.length !== v2.length) {
       return false;
     }
     return R.all(([it1, it2]) => R.identical(it1, it2), R.zip(v1, v2));
   }
 
-  if (typeof v1 === "object" && typeof v2 === "object") {
-    const keys = R.union(Object.keys(v1), Object.keys(v2));
+  if (
+    typeof v1 === "object" &&
+    !v1IsArray &&
+    typeof v2 === "object" &&
+    !v2IsArray
+  ) {
+    const keys = R.union(
+      Reflect.ownKeys(v1 as unknown as object),
+      Reflect.ownKeys(v2 as unknown as object)
+    );
     if (!keys.length) {
       return true;
     }
     return shallow(
-      R.map((key) => v1[key], keys),
-      R.map((key) => v2[key], keys)
+      R.map((key) => (v1 as PlainObject)[key], keys),
+      R.map((key) => (v2 as PlainObject)[key], keys)
     );
   }
 
   return R.identical(v1, v2);
-};
+}
 
 const createStore = <T>(init: T) => {
   const store$ = new BehaviorSubject(init);
