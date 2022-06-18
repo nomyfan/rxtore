@@ -78,7 +78,13 @@ const createStore = <T>(init: T) => {
     return { store: _store, setStore };
   };
 
-  return { useStore };
+  const observable$ = store$.asObservable();
+
+  const next = (value: T) => store$.next(value);
+
+  const get: () => Readonly<T> = () => store$.getValue();
+
+  return { useStore, observable$, next, get };
 };
 
 export { createStore, shallow, id };

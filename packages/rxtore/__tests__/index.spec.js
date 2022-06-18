@@ -1,5 +1,6 @@
 import { renderHook, act } from "@testing-library/react-hooks/dom";
 import { createStore, id, shallow } from "../index";
+import { filter, map } from "rxjs";
 
 describe("shallow comparator", () => {
   it("should return true if the objects are the same", () => {
@@ -96,5 +97,36 @@ describe("useStore", () => {
     });
 
     expect(result.current.store).toEqual({ name: "rxtore", revision: "1" });
+  });
+});
+
+describe("observable", () => {
+  it("should get updates from subscription", () => {
+    const { observable$, next } = createStore({ name: "rxtore", revision: 1 });
+
+    let nextValue = null;
+    observable$
+      .pipe(
+        filter((v) => {
+          return v.revision > 2;
+        }),
+        map((v) => ({ name: v.name }))
+      )
+      .subscribe((value) => (nextValue = value));
+
+    next({ name: "rxtore2", revision: 2 });
+    expect(nextValue).toBeNull();
+
+    next({ name: "rxtore3", revision: 3 });
+    expect(nextValue).toEqual({ name: "rxtore3" });
+  });
+
+  it("should be able to get latest value", () => {
+    const { get, next } = createStore({ name: "rxtore", revision: 1 });
+
+    expect(get()).toEqual({ name: "rxtore", revision: 1 });
+
+    next({ name: "rxtore2", revision: 2 });
+    expect(get()).toEqual({ name: "rxtore2", revision: 2 });
   });
 });
