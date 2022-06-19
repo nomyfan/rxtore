@@ -1,6 +1,5 @@
 {
   "scripts": {
-    "example-basic": "cd examples/rxtore-basic && pnpm run dev",
-    "test:unit": "cd packages/rxtore && pnpm test"
+    "example-basic": "cd examples/rxtore-basic && pnpm run dev"
   }
 }
