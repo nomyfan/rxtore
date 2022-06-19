@@ -1,4 +1,4 @@
-name: unit_test
+name: test
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: ["*"]
 
 jobs:
-  unit_test:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
