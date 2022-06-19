@@ -1,0 +1,26 @@
+name: unit_test
+
+on:
+  push:
+    branches: [main]
+  pull_request
+
+jobs:
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js 14.x
+      uses: actions/setup-node@v2.1.5
+      with:
+        node-version: 14.x
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2.0.1
+      id: pnpm-install
+      with:
+        version: 7
+        run_install: true
+
+    - name: Run tests
+      run: pnpm test:unit
