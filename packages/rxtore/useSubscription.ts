@@ -4,14 +4,14 @@ import { useMemorizedFn } from "./useMemorizedFn";
 
 function useSubscription<T>(
   source$: Observable<T>,
-  subscriber: (value: T) => void
+  observer: (value: T) => void
 ) {
-  const memorizedSubscriber = useMemorizedFn(subscriber);
+  const memorizedObserver = useMemorizedFn(observer);
   useEffect(() => {
-    const sub = source$.subscribe(memorizedSubscriber);
+    const sub = source$.subscribe(memorizedObserver);
 
     return () => sub.unsubscribe();
-  }, [source$, memorizedSubscriber]);
+  }, [source$, memorizedObserver]);
 }
 
 export { useSubscription };
