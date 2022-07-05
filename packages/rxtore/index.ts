@@ -6,6 +6,8 @@ import {
   type Unsubscribable,
 } from "rxjs";
 import * as R from "ramda";
+import { useObservable } from "./useObservable";
+import { useSubscription } from "./useSubscription";
 
 type PlainObject<V = unknown> = Record<string | symbol, V>;
 
@@ -55,21 +57,16 @@ const createStore = <T>(init: T) => {
   ) => {
     const [_store, _setStore] = useState(() => selector(store$.getValue()));
 
-    const subscription = useRef<Unsubscribable | null>(null);
-    if (!subscription.current) {
-      subscription.current = store$
-        .pipe(map(selector), distinctUntilChanged(comparator ?? R.identical))
-        .subscribe((newStore) => {
-          _setStore(newStore);
-        });
-    }
+    const observable$ = useObservable(
+      store$.pipe(
+        map(selector),
+        distinctUntilChanged(comparator ?? R.identical)
+      )
+    );
 
-    useEffect(() => {
-      return () => {
-        subscription.current?.unsubscribe();
-        subscription.current = null;
-      };
-    }, []);
+    useSubscription(observable$, (newStore) => {
+      _setStore(newStore);
+    });
 
     const setStore = (newStore: (prevStore: T) => T) => {
       store$.next(newStore(store$.getValue()));
