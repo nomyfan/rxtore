@@ -3,12 +3,12 @@
   "version": "0.0.1",
   "description": "Reactive state management based on RxJS for React.",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "tsup && tsc --emitDeclarationOnly --declaration",
     "test": "jest"
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "keywords": [
     "Reactive",
     "React",
@@ -36,5 +36,26 @@
     "rxjs": "^7.5.5",
     "tsup": "^6.1.2",
     "typescript": "^4.7.3"
+  },
+  "files": [
+    "dist/*",
+    "dist/types/*",
+    "src",
+    "LICENSE.txt",
+    "package.json",
+    "README.md",
+    "tsconfig.json"
+  ],
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "format": [
+      "cjs",
+      "esm"
+    ],
+    "splitting": false,
+    "sourcemap": false,
+    "clean": true
   }
 }

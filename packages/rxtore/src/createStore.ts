@@ -6,7 +6,7 @@ import { useSubscription } from "./useSubscription";
 
 const isFunction = (arg: any): arg is Function => typeof arg === "function";
 
-const createStore = <T extends Record<string, unknown>>(init: T) => {
+const createStore = <T extends Record<string, any>>(init: T) => {
   const store$ = new BehaviorSubject(init);
 
   const useStore = <R>(
