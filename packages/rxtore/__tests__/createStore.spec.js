@@ -83,11 +83,28 @@ describe("observable", () => {
   });
 
   it("should be able to get latest value", () => {
-    const { get, next } = createStore({ name: "rxtore", revision: 1 });
+    const { getValue, next } = createStore({ name: "rxtore", revision: 1 });
 
-    expect(get()).toEqual({ name: "rxtore", revision: 1 });
+    expect(getValue()).toEqual({ name: "rxtore", revision: 1 });
 
     next({ name: "rxtore2", revision: 2 });
-    expect(get()).toEqual({ name: "rxtore2", revision: 2 });
+    expect(getValue()).toEqual({ name: "rxtore2", revision: 2 });
+  });
+
+  it("should able to get latest value from next factory", () => {
+    const { getValue, next } = createStore({ name: "rxtore", revision: 1 });
+
+    next((st) => {
+      if (st.revision === 1) {
+        return {
+          ...st,
+          revision: 2,
+          name: "rxtore2",
+        };
+      }
+      return st;
+    });
+
+    expect(getValue()).toEqual({ name: "rxtore2", revision: 2 });
   });
 });

@@ -4,7 +4,9 @@ import * as R from "ramda";
 import { useObservable } from "./useObservable";
 import { useSubscription } from "./useSubscription";
 
-const createStore = <T>(init: T) => {
+const isFunction = (arg: any): arg is Function => typeof arg === "function";
+
+const createStore = <T extends Record<string, unknown>>(init: T) => {
   const store$ = new BehaviorSubject(init);
 
   const useStore = <R>(
@@ -33,11 +35,17 @@ const createStore = <T>(init: T) => {
 
   const observable$ = store$.asObservable();
 
-  const next = (value: T) => store$.next(value);
+  const next = (value: T | ((value: T) => T)) => {
+    if (isFunction(value)) {
+      store$.next(value(store$.getValue()));
+    } else {
+      store$.next(value);
+    }
+  };
 
-  const get: () => Readonly<T> = () => store$.getValue();
+  const getValue: () => Readonly<T> = () => store$.getValue();
 
-  return { useStore, observable$, next, get };
+  return { useStore, observable$, next, getValue };
 };
 
 export { createStore };
