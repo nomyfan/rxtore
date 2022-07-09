@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Reactive state management based on RxJS for React.",
   "scripts": {
-    "build": "tsup index.ts --format cjs,esm --dts",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
     "test": "jest"
   },
   "main": "dist/index.js",
