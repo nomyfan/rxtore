@@ -9,7 +9,12 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "keywords": [],
+  "keywords": [
+    "Reactive",
+    "React",
+    "Rx",
+    "RxJS"
+  ],
   "author": "nomyfan",
   "peerDependencies": {
     "ramda": "^0.28.0",
