@@ -59,6 +59,22 @@ describe("useStore", () => {
 
     expect(result.current.store).toEqual({ name: "rxtore", revision: "1" });
   });
+
+  it("it should return the stable setStore function", () => {
+    const { useStore } = createStore({
+      revision: "1",
+      name: "rxtore",
+      description: "Reactive",
+    });
+
+    const { result, rerender } = renderHook(() => useStore((st) => st));
+    const setStore1 = result.current.setStore;
+
+    rerender(() => useStore((st) => st));
+    const setStore2 = result.current.setStore;
+
+    expect(setStore1 === setStore2).toBe(true);
+  });
 });
 
 describe("observable", () => {
@@ -91,7 +107,7 @@ describe("observable", () => {
     expect(getValue()).toEqual({ name: "rxtore2", revision: 2 });
   });
 
-  it("should able to get latest value from next factory", () => {
+  it("should be able to get latest value from next factory", () => {
     const { getValue, next } = createStore({ name: "rxtore", revision: 1 });
 
     next((st) => {

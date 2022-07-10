@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { BehaviorSubject, distinctUntilChanged, map } from "rxjs";
 import * as R from "ramda";
 import { useObservable } from "./useObservable";
@@ -26,9 +26,12 @@ const createStore = <T extends Record<string, any>>(init: T) => {
       _setStore(newStore);
     });
 
-    const setStore = (newStore: (prevStore: T) => T) => {
-      store$.next(newStore(store$.getValue()));
-    };
+    const setStore = useCallback(
+      (newStore: (prevStore: T) => T) => {
+        store$.next(newStore(store$.getValue()));
+      },
+      [store$]
+    );
 
     return { store: _store, setStore };
   };
