@@ -1,6 +1,6 @@
 {
   "name": "rxtore",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Reactive state management based on RxJS for React.",
   "scripts": {
     "build": "tsup && tsc --emitDeclarationOnly --declaration",
