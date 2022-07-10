@@ -23,12 +23,9 @@ const createStore = <T extends Record<string, any>>(init: T) => {
       _setStore(newStore);
     });
 
-    const setStore = useCallback(
-      (newStore: (prevStore: T) => T) => {
-        store$.next(newStore(store$.getValue()));
-      },
-      [store$]
-    );
+    const setStore = useCallback((newStore: (prevStore: T) => T) => {
+      store$.next(newStore(store$.getValue()));
+    }, []);
 
     return { store: _store, setStore };
   };
