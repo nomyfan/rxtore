@@ -1,4 +1,4 @@
-import * as R from "ramda";
+import { identical, zip, union } from "./utils";
 
 type PlainObject<V = unknown> = Record<string | symbol, V>;
 
@@ -9,7 +9,8 @@ function shallow<T>(v1: T, v2: T): boolean {
     if (v1.length !== v2.length) {
       return false;
     }
-    return R.all(([it1, it2]) => R.identical(it1, it2), R.zip(v1, v2));
+
+    return zip(v1, v2).every(([it1, it2]) => identical(it1, it2));
   }
 
   if (
@@ -27,14 +28,14 @@ function shallow<T>(v1: T, v2: T): boolean {
       return true;
     }
 
-    const keys = R.union(keys1, keys2);
+    const keys = union(keys1, keys2);
     return shallow(
-      R.map((key) => (v1 as PlainObject)[key], keys),
-      R.map((key) => (v2 as PlainObject)[key], keys)
+      keys.map((key) => (v1 as PlainObject)[key]),
+      keys.map((key) => (v2 as PlainObject)[key])
     );
   }
 
-  return R.identical(v1, v2);
+  return identical(v1, v2);
 }
 
 export { shallow };

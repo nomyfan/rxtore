@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { BehaviorSubject, distinctUntilChanged, map } from "rxjs";
-import * as R from "ramda";
+import { identical } from "./utils";
 import { useObservable } from "./useObservable";
 import { useSubscription } from "./useSubscription";
 
@@ -16,10 +16,7 @@ const createStore = <T extends Record<string, any>>(init: T) => {
     const [_store, _setStore] = useState(() => selector(store$.getValue()));
 
     const observable$ = useObservable(
-      store$.pipe(
-        map(selector),
-        distinctUntilChanged(comparator ?? R.identical)
-      )
+      store$.pipe(map(selector), distinctUntilChanged(comparator ?? identical))
     );
 
     useSubscription(observable$, (newStore) => {
