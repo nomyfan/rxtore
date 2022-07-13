@@ -9,6 +9,7 @@ export default [
       sourcemap: true,
     },
     plugins: [typescript()],
+    external: ["react", "rxjs"],
   },
   {
     input: "./src/index.ts",
@@ -18,5 +19,6 @@ export default [
       sourcemap: true,
     },
     plugins: [typescript()],
+    external: ["react", "rxjs"],
   },
 ];
