@@ -13,14 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Setup Node.js 14.x
-        uses: actions/setup-node@v2.1.5
-        with:
-          node-version: 14.x
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2.0.1
-        id: pnpm-install
+      - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
           run_install: true
