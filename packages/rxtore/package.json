@@ -1,6 +1,6 @@
 {
   "name": "rxtore",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Reactive state management based on RxJS for React.",
   "scripts": {
     "build": "rimraf dist && rollup --config rollup.config.js && tsc --emitDeclarationOnly --declaration",
