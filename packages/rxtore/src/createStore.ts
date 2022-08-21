@@ -1,8 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { BehaviorSubject, distinctUntilChanged, map } from "rxjs";
 import { identical } from "./utils";
-import { useObservable } from "./useObservable";
-import { useSubscription } from "./useSubscription";
 
 const isFunction = (arg: any): arg is Function => typeof arg === "function";
 
@@ -15,13 +13,15 @@ const createStore = <T extends Record<string, any>>(init: T) => {
   ) => {
     const [_store, _setStore] = useState(() => selector(store$.getValue()));
 
-    const observable$ = useObservable(
-      store$.pipe(map(selector), distinctUntilChanged(comparator ?? identical))
-    );
+    useEffect(() => {
+      const subscription = store$
+        .pipe(map(selector), distinctUntilChanged(comparator ?? identical))
+        .subscribe((newStore) => {
+          _setStore(newStore);
+        });
 
-    useSubscription(observable$, (newStore) => {
-      _setStore(newStore);
-    });
+      return () => subscription.unsubscribe();
+    }, []);
 
     const setStore = useCallback((newStore: (prevStore: T) => T) => {
       store$.next(newStore(store$.getValue()));
