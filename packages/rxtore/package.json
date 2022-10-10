@@ -44,17 +44,5 @@
     "package.json",
     "README.md",
     "tsconfig.json"
-  ],
-  "tsup": {
-    "entry": [
-      "src/index.ts"
-    ],
-    "format": [
-      "cjs",
-      "esm"
-    ],
-    "splitting": false,
-    "sourcemap": false,
-    "clean": true
-  }
+  ]
 }
