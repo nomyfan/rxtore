@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { BehaviorSubject, distinctUntilChanged, map } from "rxjs";
 import { identical } from "./utils";
 
@@ -7,9 +7,23 @@ const isFunction = (arg: any): arg is Function => typeof arg === "function";
 const createStore = <T extends Record<string, any>>(init: T) => {
   const store$ = new BehaviorSubject(init);
 
+  function setStore(
+    newStore: (prevStore: T, replace?: false) => Partial<T>,
+  ): void;
+  function setStore(newStore: (prevStore: T) => T, replace: true): void;
+  function setStore(newStore: any, replace?: any): void {
+    if (replace) {
+      store$.next(newStore(store$.getValue()));
+    } else {
+      store$.next(
+        Object.assign({}, store$.getValue(), newStore(store$.getValue())),
+      );
+    }
+  }
+
   const useStore = <R>(
     selector: (state: T) => R,
-    comparator?: (t1: R, t2: R) => boolean
+    comparator?: (t1: R, t2: R) => boolean,
   ) => {
     const [_store, _setStore] = useState(() => selector(store$.getValue()));
 
@@ -21,10 +35,6 @@ const createStore = <T extends Record<string, any>>(init: T) => {
         });
 
       return () => subscription.unsubscribe();
-    }, []);
-
-    const setStore = useCallback((newStore: (prevStore: T) => T) => {
-      store$.next(newStore(store$.getValue()));
     }, []);
 
     return { store: _store, setStore };

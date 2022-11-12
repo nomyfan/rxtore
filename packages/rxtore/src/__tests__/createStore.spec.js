@@ -11,6 +11,30 @@ describe("useStore", () => {
     expect(result.current.store).toEqual(initStore);
   });
 
+  it("should replace the whole store", () => {
+    const initStore = { name: "rxtore", count: 1 };
+    const { useStore } = createStore(initStore);
+    const { result } = renderHook(() => useStore(id));
+
+    act(() => {
+      result.current.setStore(() => ({ name: "rxtore-updated" }), true);
+    });
+
+    expect(result.current.store).toEqual({ name: "rxtore-updated" });
+  });
+
+  it("should merge state", () => {
+    const initStore = { name: "rxtore", count: 1 };
+    const { useStore } = createStore(initStore);
+    const { result } = renderHook(() => useStore(id));
+
+    act(() => {
+      result.current.setStore(() => ({ name: "rxtore-updated" }));
+    });
+
+    expect(result.current.store).toEqual({ name: "rxtore-updated", count: 1 });
+  });
+
   it("should return updated store", () => {
     const { useStore } = createStore({ name: "rxtore" });
     const { result } = renderHook(() => useStore(id));
@@ -29,7 +53,7 @@ describe("useStore", () => {
     });
 
     const { result } = renderHook(() =>
-      useStore((state) => ({ name: state.name }))
+      useStore((state) => ({ name: state.name })),
     );
 
     expect(result.current.store).toEqual({ name: "rxtore" });
@@ -45,8 +69,8 @@ describe("useStore", () => {
     const { result } = renderHook(() =>
       useStore(
         (state) => ({ name: state.name, revision: state.revision }),
-        (s1, s2) => s1.name === s2.name
-      )
+        (s1, s2) => s1.name === s2.name,
+      ),
     );
 
     act(() => {
@@ -87,7 +111,7 @@ describe("observable", () => {
         filter((v) => {
           return v.revision > 2;
         }),
-        map((v) => ({ name: v.name }))
+        map((v) => ({ name: v.name })),
       )
       .subscribe((value) => (nextValue = value));
 
