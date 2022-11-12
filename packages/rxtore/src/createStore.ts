@@ -1,6 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { BehaviorSubject, distinctUntilChanged, map } from "rxjs";
 import { identical } from "./utils";
+
+const isBrowser = !!(
+  typeof window !== "undefined" &&
+  window.document &&
+  window.document.createElement
+);
+
+const useIsomorphicLayoutEffect = isBrowser ? useLayoutEffect : useEffect;
 
 const isFunction = (arg: any): arg is Function => typeof arg === "function";
 
@@ -27,7 +35,7 @@ const createStore = <T extends Record<string, any>>(init: T) => {
   ) => {
     const [_store, _setStore] = useState(() => selector(store$.getValue()));
 
-    useEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       const subscription = store$
         .pipe(map(selector), distinctUntilChanged(comparator ?? identical))
         .subscribe((newStore) => {
