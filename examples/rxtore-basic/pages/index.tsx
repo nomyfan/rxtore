@@ -10,22 +10,17 @@ function Counter() {
     <div>
       <h1>Count: {store.count}</h1>
       <button
-        onClick={() =>
-          setStore(({ count, ...rest }) => {
-            return { ...rest, count: count + 1 };
-          })
-        }
-      >
+        onClick={() => {
+          setStore(({ count }) => {
+            return { count: count + 1 };
+          });
+        }}>
         +1
       </button>
       <button
-        onClick={() =>
-          setStore(({ ...rest }) => ({
-            ...rest,
-            name: `git+${Math.floor(Math.random() * 10)}`,
-          }))
-        }
-      >
+        onClick={() => {
+          setStore(() => ({ name: `git+${Math.floor(Math.random() * 10)}` }));
+        }}>
         git+
       </button>
     </div>
@@ -40,13 +35,9 @@ function Name() {
     <div>
       <h1>Name: {store.name}</h1>
       <button
-        onClick={() =>
-          setStore((st) => ({
-            ...st,
-            name: `git+${Math.floor(Math.random() * 10)}`,
-          }))
-        }
-      >
+        onClick={() => {
+          setStore(() => ({ name: `git+${Math.floor(Math.random() * 10)}` }));
+        }}>
         git+
       </button>
     </div>
