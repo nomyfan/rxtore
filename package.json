@@ -1,5 +1,8 @@
 {
   "scripts": {
     "example-basic": "cd examples/rxtore-basic && pnpm run dev"
+  },
+  "devDependencies": {
+    "prettier": "^2.7.1"
   }
 }
