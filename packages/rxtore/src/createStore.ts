@@ -1,6 +1,13 @@
 import { useState, useEffect, useLayoutEffect } from "react";
-import { BehaviorSubject, distinctUntilChanged, map } from "rxjs";
+import {
+  BehaviorSubject,
+  distinctUntilChanged,
+  filter,
+  map,
+  startWith,
+} from "rxjs";
 import { identical } from "./utils";
+import { useConstant } from "./useConstant";
 
 const isBrowser = !!(
   typeof window !== "undefined" &&
@@ -33,11 +40,16 @@ const createStore = <T extends Record<string, any>>(init: T) => {
     selector: (state: T) => R,
     comparator?: (t1: R, t2: R) => boolean,
   ) => {
-    const [_store, _setStore] = useState(() => selector(store$.getValue()));
+    const initialValue = useConstant(() => store$.getValue());
+    const [_store, _setStore] = useState(() => selector(initialValue));
 
     useIsomorphicLayoutEffect(() => {
       const subscription = store$
-        .pipe(map(selector), distinctUntilChanged(comparator ?? identical))
+        .pipe(
+          filter((v) => v !== initialValue),
+          map(selector),
+        )
+        .pipe(startWith(_store), distinctUntilChanged(comparator ?? identical))
         .subscribe((newStore) => {
           _setStore(newStore);
         });
