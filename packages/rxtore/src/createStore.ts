@@ -36,7 +36,7 @@ const createStore = <T extends Record<string, any>>(init: T) => {
     }
   }
 
-  const useStore = <R>(
+  const useStoreValue = <R>(
     selector: (state: T) => R,
     comparator?: (t1: R, t2: R) => boolean,
   ) => {
@@ -57,7 +57,19 @@ const createStore = <T extends Record<string, any>>(init: T) => {
       return () => subscription.unsubscribe();
     }, []);
 
-    return { store: _store, setStore };
+    return _store;
+  };
+
+  const useSetStore = () => setStore;
+
+  const useStore = <R>(
+    selector: (state: T) => R,
+    comparator?: (t1: R, t2: R) => boolean,
+  ) => {
+    const store = useStoreValue(selector, comparator);
+    const setStore = useSetStore();
+
+    return { store, setStore };
   };
 
   const observable$ = store$.asObservable();
@@ -72,7 +84,7 @@ const createStore = <T extends Record<string, any>>(init: T) => {
 
   const getValue: () => Readonly<T> = () => store$.getValue();
 
-  return { useStore, observable$, next, getValue };
+  return { useStore, useSetStore, useStoreValue, observable$, next, getValue };
 };
 
 export { createStore };
