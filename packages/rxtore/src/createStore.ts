@@ -76,7 +76,7 @@ function createHook<T>(
   return { useStore, useStoreValue, useSetStore };
 }
 
-const createStore = <T extends Record<string, any>>(init: T) => {
+function createObservable<T extends Record<string, any>>(init: T) {
   const store$ = new BehaviorSubject(init);
 
   const observable$ = store$.asObservable();
@@ -91,13 +91,19 @@ const createStore = <T extends Record<string, any>>(init: T) => {
 
   const getValue: () => Readonly<T> = () => store$.getValue();
 
+  return { observable$, getValue, next };
+}
+
+function createStore<T extends Record<string, any>>(init: T) {
+  const { observable$, getValue, next } = createObservable(init);
+
   const { useStore, useStoreValue, useSetStore } = createHook<T>(
-    store$,
+    observable$,
     getValue,
     next,
   );
 
   return { useStore, useSetStore, useStoreValue, observable$, next, getValue };
-};
+}
 
 export { createStore, createHook };
