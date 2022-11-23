@@ -4,6 +4,7 @@ import {
   distinctUntilChanged,
   filter,
   map,
+  Observable,
   startWith,
 } from "rxjs";
 import { identical } from "./utils";
@@ -19,20 +20,20 @@ const useIsomorphicLayoutEffect = isBrowser ? useLayoutEffect : useEffect;
 
 const isFunction = (arg: any): arg is Function => typeof arg === "function";
 
-const createStore = <T extends Record<string, any>>(init: T) => {
-  const store$ = new BehaviorSubject(init);
-
+function createHook<T>(
+  store$: Observable<T>,
+  getValue: () => T,
+  next: (value: T) => void,
+) {
   function setStore(
     newStore: (prevStore: T, replace?: false) => Partial<T>,
   ): void;
   function setStore(newStore: (prevStore: T) => T, replace: true): void;
   function setStore(newStore: any, replace?: any): void {
     if (replace) {
-      store$.next(newStore(store$.getValue()));
+      next(newStore(getValue()));
     } else {
-      store$.next(
-        Object.assign({}, store$.getValue(), newStore(store$.getValue())),
-      );
+      next(Object.assign({}, getValue(), newStore(getValue())));
     }
   }
 
@@ -40,7 +41,7 @@ const createStore = <T extends Record<string, any>>(init: T) => {
     selector: (state: T) => R,
     comparator?: (t1: R, t2: R) => boolean,
   ) => {
-    const initialValue = useConstant(() => store$.getValue());
+    const initialValue = useConstant(() => getValue());
     const [_store, _setStore] = useState(() => selector(initialValue));
 
     useIsomorphicLayoutEffect(() => {
@@ -72,6 +73,12 @@ const createStore = <T extends Record<string, any>>(init: T) => {
     return { store, setStore };
   };
 
+  return { useStore, useStoreValue, useSetStore };
+}
+
+const createStore = <T extends Record<string, any>>(init: T) => {
+  const store$ = new BehaviorSubject(init);
+
   const observable$ = store$.asObservable();
 
   const next = (value: T | ((value: T) => T)) => {
@@ -84,7 +91,13 @@ const createStore = <T extends Record<string, any>>(init: T) => {
 
   const getValue: () => Readonly<T> = () => store$.getValue();
 
+  const { useStore, useStoreValue, useSetStore } = createHook<T>(
+    store$,
+    getValue,
+    next,
+  );
+
   return { useStore, useSetStore, useStoreValue, observable$, next, getValue };
 };
 
-export { createStore };
+export { createStore, createHook };
