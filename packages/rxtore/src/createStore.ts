@@ -50,7 +50,11 @@ function createHook<T>(
           filter((v) => v !== initialValue),
           map(selector),
         )
-        .pipe(startWith(_store), distinctUntilChanged(comparator ?? identical))
+        .pipe(
+          startWith(_store),
+          distinctUntilChanged(comparator ?? identical),
+          filter((v) => v !== _store),
+        )
         .subscribe((newStore) => {
           _setStore(newStore);
         });
